@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import Range from "./components/Range.vue";
+import ProvidersChart from "./components/providers-chart/ProvidersChart.vue";
 
 import { ref } from "vue";
 
@@ -9,12 +10,6 @@ let currentTransfer = ref<number>(400);
 interface RangeItem {
   min: number;
   max: number;
-}
-
-interface ProviderInfo {
-  minPaymentAmount: number;
-  priceOfStorageGb: number;
-  priceOfTransferGb: number;
 }
 
 let storageRange: RangeItem = {
@@ -70,15 +65,21 @@ let transferRange: RangeItem = {
       </div>
     </div>
   </div>
+
+  <ProvidersChart
+    :currentStorage="currentStorage"
+    :currentTransfer="currentTransfer"
+  />
 </template>
 
 <style lang="scss">
 .customer-needs {
   display: flex;
-  margin: 0 - 20px;
+  margin: 0 -20px 40px;
 
   &__col {
-    // width: 50%;
+    max-width: 50%;
+    flex: 0 0 50%;
     padding: 0 20px;
   }
 }
