@@ -1,12 +1,75 @@
 <script setup lang="ts">
-import { defineEmits } from "vue";
-import type { Provider } from "./types";
+import { defineEmits, computed, ref } from "vue";
+import type { Provider, Price } from "./types";
 
-defineProps<{ provider: Provider; total: number }>();
+type ProvidersChartItemProps = {
+  provider: Provider;
+  sizeOfVolumeStorage: number;
+  sizeOfVolumeTransfer: number;
+};
 
-const emit = defineEmits<{
-  (e: "change", value: string): void;
-}>();
+const props = defineProps<ProvidersChartItemProps>();
+
+const hasOptions = !!props.provider.options && props.provider.options.length;
+
+let currentOption = ref<string>(hasOptions ? props.provider.options[0].key : '');
+
+const totalOfStorage = computed(() => {
+  const { priceOfStorageGb } = props.provider;
+  let currentPrice: Price, totalOfStorage: number;
+  
+  currentPrice = priceOfStorageGb[currentOption.value] || priceOfStorageGb;
+  
+  if (currentPrice.freeUp && props.sizeOfVolumeTransfer < currentPrice.freeUp) {
+    totalOfStorage = 0;
+  } else {
+    totalOfStorage = props.sizeOfVolumeStorage * currentPrice.price;
+  }  
+  
+  return totalOfStorage;
+});
+
+const totalOfTransfer = computed(() => {
+  const { priceOfTransferGb } = props.provider;
+  let currentPrice: Price, totalOfTransfer: number;
+  
+  currentPrice = priceOfTransferGb[currentOption.value] || priceOfTransferGb;
+  
+  if (currentPrice.freeUp && props.sizeOfVolumeTransfer < currentPrice.freeUp) {
+    totalOfTransfer = 0;
+  } else {
+    totalOfTransfer = props.sizeOfVolumeTransfer * currentPrice.price;
+  }  
+  
+  return totalOfTransfer;
+});
+
+const total = computed(() => {  
+  let total =  totalOfStorage.value + totalOfTransfer.value;
+  
+  if (total < props.provider.minPaymentAmount) {
+    total = props.provider.minPaymentAmount;
+  } 
+  
+  if (total > props.provider.maxPaymentAmount) {
+    total = props.provider.maxPaymentAmount;
+  }
+  
+  return total;
+});
+
+const totalFormatted = computed(() => {  
+  return currencyFormatter.format(total.value);
+});
+
+const currencyFormatter = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD'
+});
+
+// const emit = defineEmits<{
+//   (e: "change", value: string): void;
+// }>();
 </script>
 
 <template>
@@ -19,12 +82,12 @@ const emit = defineEmits<{
           <label v-for="(option, idx) in provider.options" class="">
             <input
               type="radio"
+              v-model="currentOption"
+              :value="option.key"
               :name="`${provider.name}-option`"
-              value="option.title"
-              :checked="idx === 0"
-              @change="emit('change', option.key)"
             />
             {{ option.title }}
+              <!-- @change="emit('change', option.key)" -->
           </label>
         </div>
       </div>
@@ -33,7 +96,7 @@ const emit = defineEmits<{
     </div>
 
     <div class="provider-chart-item__bar" style="--bar-size: 40%">
-      <div class="provider-chart-item__total">{{ total }}$</div>
+      <div class="provider-chart-item__total">{{ totalFormatted }}</div>
     </div>
   </div>
 </template>

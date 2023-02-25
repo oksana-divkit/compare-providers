@@ -3,7 +3,7 @@ export interface Price {
   freeUp?: number;
 }
 
-export interface PriceOption {
+export interface PriceOptions {
   [index: string]: Price;
 }
 
@@ -13,18 +13,11 @@ export interface Provider {
   icon: string;
   minPaymentAmount?: number;
   maxPaymentAmount?: number;
-  priceOfStorageGb: Price | PriceOption[];
-  priceOfTransferGb: Price | PriceOption[];
+  priceOfStorageGb: Price | PriceOptions;
+  priceOfTransferGb: Price | PriceOptions;
   options?: {
     key: string;
     title: string;
     descr?: string;
   }[];
-}
-
-export interface ProvidersTotal {
-  [index: string]: {
-    currentOption: Ref<string>;
-    total: Ref<number>;
-  };
 }
