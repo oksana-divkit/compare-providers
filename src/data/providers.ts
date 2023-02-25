@@ -14,7 +14,10 @@ export const providers: Provider[] = [
     name: "bunny.net",
     icon: "",
     maxPaymentAmount: 10,
-    priceOfStorageGb: [{ hdd: { price: 0.01 } }, { ssd: { price: 0.02 } }],
+    priceOfStorageGb: { 
+      hdd: { price: 0.01 },  
+      ssd: { price: 0.02 } 
+    },
     priceOfTransferGb: { price: 0.01 },
     options: [
       { key: "hdd", title: "HDD" },
@@ -25,10 +28,10 @@ export const providers: Provider[] = [
     id: "3",
     name: "scaleway.com",
     icon: "",
-    priceOfStorageGb: [
-      { multi: { price: 0.06, freeUp: 75 } },
-      { single: { price: 0.03, freeUp: 75 } },
-    ],
+    priceOfStorageGb: {
+      multi: { price: 0.06, freeUp: 75 },
+      single: { price: 0.03, freeUp: 75 } 
+    },
     priceOfTransferGb: { price: 0.02, freeUp: 75 },
     options: [
       { key: "multi", title: "Multi" },

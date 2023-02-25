@@ -24,16 +24,6 @@ let transferRange: RangeItem = {
 </script>
 
 <template>
-  <!-- <div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
-  </div>
-  <HelloWorld msg="Vite + Vue" /> -->
-
   <div class="customer-needs">
     <div class="customer-needs__col">
       <div class="usage-range">
@@ -67,8 +57,8 @@ let transferRange: RangeItem = {
   </div>
 
   <ProvidersChart
-    :currentStorage="currentStorage"
-    :currentTransfer="currentTransfer"
+    :sizeOfVolumeStorage="currentStorage"
+    :sizeOfVolumeTransfer="currentTransfer"
   />
 </template>
 

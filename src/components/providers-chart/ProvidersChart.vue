@@ -2,34 +2,19 @@
 import { ref, onMounted, computed } from "vue";
 import type { Ref } from "vue";
 import ProviderChartItem from "./ProviderChartItem.vue";
-import { providers } from "./data/providers";
 import type { Provider, ProvidersTotal } from "./types";
+import { providers } from "@/data/providers";
 
-const props = defineProps<{
-  currentStorage: number;
-  currentTransfer: number;
-}>();
+type ProvidersChartProps = {
+  sizeOfVolumeStorage: number;
+  sizeOfVolumeTransfer: number;
+};
 
-let providersTotal: ProvidersTotal = {};
 
-providers.forEach((p: Provider) => {
-  providersTotal[p.id] = {
-    currentOption: ref(p.options?.at(0).key),
-    total: ref(0),
-  };
-});
+const props = defineProps<ProvidersChartProps>();
 
 onMounted(() => {
-  providersTotal["0"].total = 50;
 });
-
-let ff = computed(() => props.currentStorage * 1000);
-
-function render(): void {
-  providersTotal.forEach((p: Provider) => {
-    // p.total =
-  });
-}
 </script>
 
 <template>
@@ -37,20 +22,18 @@ function render(): void {
     <ProviderChartItem
       v-for="provider in providers"
       :provider="provider"
-      :total="providersTotal[provider.id].total"
-      @change="
+      :sizeOfVolumeStorage="sizeOfVolumeStorage"
+      :sizeOfVolumeTransfer="sizeOfVolumeTransfer"
+    />
+  </div>
+  
+  
+      <!-- @change="
         (e) => {
           providersTotal[provider.id].currentOption.value = e;
           render();
         }
-      "
-    />
-  </div>
-
-  {{ providersTotal["2"]?.currentOption.value }} 55
-
-  {{ currentStorage }}
-  {{ ff }}
+      " -->
 </template>
 
 <style lang="scss"></style>
