@@ -1,13 +1,11 @@
 <script setup lang="ts">
-import { defineEmits } from "vue";
-
-type RangeProps = {
+type InputRangeProps = {
   min: number;
   max: number;
   modelValue: number;
 };
 
-defineProps<RangeProps>();
+defineProps<InputRangeProps>();
 
 const emit = defineEmits<{
   (e: "update:modelValue", value: number): void;
@@ -43,6 +41,8 @@ const emit = defineEmits<{
   &__values {
     display: flex;
     justify-content: space-between;
+    font-size: 13px;
+    color: #999;
   }
 }
 </style>

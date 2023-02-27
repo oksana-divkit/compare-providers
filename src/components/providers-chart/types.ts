@@ -1,5 +1,5 @@
 export interface Price {
-  price: number;
+  priceValue: number;
   freeUp?: number;
 }
 

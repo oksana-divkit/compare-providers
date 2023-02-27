@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { defineEmits, computed, ref } from "vue";
-import type { Provider, Price } from "./types";
+import { computed, ref } from "vue";
+import type { Provider, Price, PriceOptions } from "./types";
 
 type ProvidersChartItemProps = {
   provider: Provider;
@@ -10,49 +10,26 @@ type ProvidersChartItemProps = {
 
 const props = defineProps<ProvidersChartItemProps>();
 
-const hasOptions = !!props.provider.options && props.provider.options.length;
-
-let currentOption = ref<string>(hasOptions ? props.provider.options[0].key : '');
+let currentOption = ref<string>(props.provider.options?.at(0)?.key || '');
 
 const totalOfStorage = computed(() => {
-  const { priceOfStorageGb } = props.provider;
-  let currentPrice: Price, totalOfStorage: number;
-  
-  currentPrice = priceOfStorageGb[currentOption.value] || priceOfStorageGb;
-  
-  if (currentPrice.freeUp && props.sizeOfVolumeTransfer < currentPrice.freeUp) {
-    totalOfStorage = 0;
-  } else {
-    totalOfStorage = props.sizeOfVolumeStorage * currentPrice.price;
-  }  
-  
-  return totalOfStorage;
+  return getTotalFor(props.sizeOfVolumeStorage, props.provider.priceOfStorageGb);
 });
 
-const totalOfTransfer = computed(() => {
-  const { priceOfTransferGb } = props.provider;
-  let currentPrice: Price, totalOfTransfer: number;
-  
-  currentPrice = priceOfTransferGb[currentOption.value] || priceOfTransferGb;
-  
-  if (currentPrice.freeUp && props.sizeOfVolumeTransfer < currentPrice.freeUp) {
-    totalOfTransfer = 0;
-  } else {
-    totalOfTransfer = props.sizeOfVolumeTransfer * currentPrice.price;
-  }  
-  
-  return totalOfTransfer;
+const totalOfTransfer = computed(() => {  
+  return getTotalFor(props.sizeOfVolumeTransfer, props.provider.priceOfTransferGb);
 });
 
-const total = computed(() => {  
+const total = computed(() => {
+  const { minPaymentAmount, maxPaymentAmount } = props.provider;
   let total =  totalOfStorage.value + totalOfTransfer.value;
   
-  if (total < props.provider.minPaymentAmount) {
-    total = props.provider.minPaymentAmount;
+  if (minPaymentAmount && total < minPaymentAmount) {
+    total = minPaymentAmount;
   } 
   
-  if (total > props.provider.maxPaymentAmount) {
-    total = props.provider.maxPaymentAmount;
+  if (maxPaymentAmount && total > maxPaymentAmount) {
+    total = maxPaymentAmount;
   }
   
   return total;
@@ -61,6 +38,24 @@ const total = computed(() => {
 const totalFormatted = computed(() => {  
   return currencyFormatter.format(total.value);
 });
+
+function getTotalFor(amountOfGb: number, priceOfGb: Price | PriceOptions): number {
+  let currentPrice: Price, totalOfTransfer: number;
+  
+  currentPrice = isPrice(priceOfGb) ? priceOfGb : priceOfGb[currentOption.value];
+  
+  if (currentPrice.freeUp && amountOfGb < currentPrice.freeUp) {
+    totalOfTransfer = 0;
+  } else {
+    totalOfTransfer = amountOfGb * currentPrice.priceValue;
+  }  
+  
+  return totalOfTransfer;
+}
+
+function isPrice(price: Price | PriceOptions): price is Price {
+  return 'priceValue' in price;
+}
 
 const currencyFormatter = new Intl.NumberFormat('en-US', {
   style: 'currency',
@@ -123,6 +118,7 @@ const currencyFormatter = new Intl.NumberFormat('en-US', {
 
   &__name {
     margin: 0;
+    font-weight: bold;
   }
 
   &__icon {
@@ -138,15 +134,21 @@ const currencyFormatter = new Intl.NumberFormat('en-US', {
   &__bar {
     position: relative;
     width: var(--bar-size);
-    height: 20px;
-    background: cadetblue;
+    height: 30px;
+    background: var(--clr-base);
   }
 
   &__total {
     position: absolute;
     top: 0;
-    left: 100%;
-    margin: 0 0 0 5px;
+    bottom: 0;
+    left: 0;
+    padding: 0 20px 0 10px;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 30px;
+    color: #fff;
+    background: linear-gradient(to left, transparent 5%, rgba(0, 0, 0, .4));
   }
 }
 </style>
