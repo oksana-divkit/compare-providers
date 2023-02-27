@@ -1,13 +1,13 @@
-import type { Provider } from "../types";
+import type { Provider } from "@/components/providers-chart/types";
 
 export const providers: Provider[] = [
   {
-    id: "0",
+    id: "1",
     name: "backblaze.com",
     icon: "",
     minPaymentAmount: 7,
-    priceOfStorageGb: { price: 0.005 },
-    priceOfTransferGb: { price: 0.01 },
+    priceOfStorageGb: { priceValue: 0.005 },
+    priceOfTransferGb: { priceValue: 0.01 },
   },
   {
     id: "2",
@@ -15,10 +15,10 @@ export const providers: Provider[] = [
     icon: "",
     maxPaymentAmount: 10,
     priceOfStorageGb: { 
-      hdd: { price: 0.01 },  
-      ssd: { price: 0.02 } 
+      hdd: { priceValue: 0.01 },  
+      ssd: { priceValue: 0.02 } 
     },
-    priceOfTransferGb: { price: 0.01 },
+    priceOfTransferGb: { priceValue: 0.01 },
     options: [
       { key: "hdd", title: "HDD" },
       { key: "ssd", title: "SSD" },
@@ -29,10 +29,10 @@ export const providers: Provider[] = [
     name: "scaleway.com",
     icon: "",
     priceOfStorageGb: {
-      multi: { price: 0.06, freeUp: 75 },
-      single: { price: 0.03, freeUp: 75 } 
+      multi: { priceValue: 0.06, freeUp: 75 },
+      single: { priceValue: 0.03, freeUp: 75 } 
     },
-    priceOfTransferGb: { price: 0.02, freeUp: 75 },
+    priceOfTransferGb: { priceValue: 0.02, freeUp: 75 },
     options: [
       { key: "multi", title: "Multi" },
       { key: "single", title: "Single" },
@@ -43,7 +43,7 @@ export const providers: Provider[] = [
     name: "vultr.com",
     icon: "",
     minPaymentAmount: 5,
-    priceOfStorageGb: { price: 0.01 },
-    priceOfTransferGb: { price: 0.01 },
+    priceOfStorageGb: { priceValue: 0.01 },
+    priceOfTransferGb: { priceValue: 0.01 },
   },
 ];

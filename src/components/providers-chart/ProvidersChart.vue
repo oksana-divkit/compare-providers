@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from "vue";
 import type { Ref } from "vue";
-import ProviderChartItem from "./ProviderChartItem.vue";
-import type { Provider, ProvidersTotal } from "./types";
+import ProviderChartItem from "./ProvidersChartItem.vue";
+
 import { providers } from "@/data/providers";
+import type { Provider } from "./types";
 
 type ProvidersChartProps = {
   sizeOfVolumeStorage: number;
   sizeOfVolumeTransfer: number;
 };
-
 
 const props = defineProps<ProvidersChartProps>();
 

@@ -1,64 +1,40 @@
 <script setup lang="ts">
-import Range from "./components/Range.vue";
+import { reactive } from "vue";
+import InputRange from "./components/input-range/InputRange.vue";
 import ProvidersChart from "./components/providers-chart/ProvidersChart.vue";
 
-import { ref } from "vue";
+import { customerNeedsData } from "@/data/customer-needs";
+import type { CustomerNeeds } from "@/types/customer-needs"
 
-let currentStorage = ref<number>(100);
-let currentTransfer = ref<number>(400);
+const customerNeeds = reactive<CustomerNeeds>(customerNeedsData);
 
-interface RangeItem {
-  min: number;
-  max: number;
-}
-
-let storageRange: RangeItem = {
-  min: 0,
-  max: 1000,
-};
-
-let transferRange: RangeItem = {
-  min: 0,
-  max: 1000,
-};
 </script>
 
 <template>
   <div class="customer-needs">
-    <div class="customer-needs__col">
+    <div v-for="item in customerNeeds" class="customer-needs__col">
       <div class="usage-range">
         <header class="usage-range__header">
-          <h3 class="usage-range__title">Storage:</h3>
-          <div>{{ currentStorage }} GB</div>
+          <h3 class="usage-range__title">{{ item.title }}</h3>
+          <div class="usage-range__value">
+            <input type="text" v-model.lazy="item.current" @focus="($event.target  as HTMLInputElement).select()" class="usage-range__input" />
+             GB
+          </div>
         </header>
 
-        <Range
-          :min="storageRange.min"
-          :max="storageRange.max"
-          v-model="currentStorage"
+        <InputRange
+          :min="item.range.min"
+          :max="item.range.max"
+          v-model="item.current"
         />
       </div>
     </div>
-
-    <div class="customer-needs__col">
-      <div class="usage-range">
-        <header class="usage-range__header">
-          <h3 class="usage-range__title">Transfer:</h3>
-          <div>{{ currentTransfer }} GB</div>
-        </header>
-
-        <Range
-          :min="transferRange.min"
-          :max="transferRange.max"
-          v-model="currentTransfer"
-        />
-      </div>
-    </div>
+    
   </div>
 
   <ProvidersChart
-    :sizeOfVolumeStorage="currentStorage"
-    :sizeOfVolumeTransfer="currentTransfer"
+    :sizeOfVolumeStorage="customerNeeds.storage.current"
+    :sizeOfVolumeTransfer="customerNeeds.transfer.current"
   />
 </template>
 
@@ -78,10 +54,49 @@ let transferRange: RangeItem = {
   &__header {
     display: flex;
     justify-content: space-between;
+    margin: 0 0 10px;
   }
 
   &__title {
+    max-width: 50%;
     margin: 0 10px 0 0;
+  }
+  
+  &__value {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin: 0 0 0 5px;
+  }
+  
+  &__input {
+    width: 100px;
+    max-width: 90%;
+    min-width: 0;
+    flex: 1;
+    min-width: 0;
+    margin: 0 4px 0 0;
+    padding: 4px 8px;
+    text-align: right;
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: bold;
+    color: var(--clr-base);
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    transition: all .2s;
+    
+    &:hover {
+      border-color: #777;
+    }
+    
+    &:focus,
+    &:active {
+      box-shadow: 0 0 0 1px var(--clr-base);
+      border-color: var(--clr-base);
+      outline: none;
+    }
   }
 }
 </style>
