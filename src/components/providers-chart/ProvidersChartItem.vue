@@ -6,11 +6,22 @@ type ProvidersChartItemProps = {
   provider: Provider;
   sizeOfVolumeStorage: number;
   sizeOfVolumeTransfer: number;
+  minTotal: number;
+  maxTotal: number;
 };
 
 const props = defineProps<ProvidersChartItemProps>();
 
+const emit = defineEmits<{
+  (e: "change", value: number): void;
+}>();
+
 let currentOption = ref<string>(props.provider.options?.at(0)?.key || '');
+
+const sizeOfBar = computed(() => {  
+  console.log(total);
+  return total.value / props.maxTotal * 100;
+});
 
 const totalOfStorage = computed(() => {
   return getTotalFor(props.sizeOfVolumeStorage, props.provider.priceOfStorageGb);
@@ -31,6 +42,8 @@ const total = computed(() => {
   if (maxPaymentAmount && total > maxPaymentAmount) {
     total = maxPaymentAmount;
   }
+  
+  emit('change', total);
   
   return total;
 });
@@ -61,14 +74,10 @@ const currencyFormatter = new Intl.NumberFormat('en-US', {
   style: 'currency',
   currency: 'USD'
 });
-
-// const emit = defineEmits<{
-//   (e: "change", value: string): void;
-// }>();
 </script>
 
 <template>
-  <div class="provider-chart-item">
+  <div class="provider-chart-item" :class="{ '--best': minTotal === total }">
     <div class="provider-chart-item__info">
       <div class="provider-chart-item__title">
         <p class="provider-chart-item__name">{{ provider.name }}</p>
@@ -90,8 +99,10 @@ const currencyFormatter = new Intl.NumberFormat('en-US', {
       <div class="provider-chart-item__icon"></div>
     </div>
 
-    <div class="provider-chart-item__bar" style="--bar-size: 40%">
-      <div class="provider-chart-item__total">{{ totalFormatted }}</div>
+    <div class="provider-chart-item__chart">
+      <div class="provider-chart-item__bar" :style="`--bar-size: ${sizeOfBar}%`">
+        <div class="provider-chart-item__total">{{ totalFormatted }}</div>
+      </div>
     </div>
   </div>
 </template>
@@ -100,6 +111,11 @@ const currencyFormatter = new Intl.NumberFormat('en-US', {
 .provider-chart-item {
   display: flex;
   align-items: center;
+  --clr-bg: var(--clr-base);
+  
+  &.--best {
+    --clr-bg: var(--clr-accent);
+  }
 
   &__info {
     display: flex;
@@ -131,11 +147,15 @@ const currencyFormatter = new Intl.NumberFormat('en-US', {
     background: #ccc;
   }
 
+  &__chart {
+    flex: 1;
+  }
+
   &__bar {
     position: relative;
     width: var(--bar-size);
     height: 30px;
-    background: var(--clr-base);
+    background: var(--clr-bg);
   }
 
   &__total {
@@ -143,12 +163,12 @@ const currencyFormatter = new Intl.NumberFormat('en-US', {
     top: 0;
     bottom: 0;
     left: 0;
-    padding: 0 20px 0 10px;
+    padding: 0 30px 0 10px;
     font-size: 13px;
     font-weight: 600;
     line-height: 30px;
     color: #fff;
-    background: linear-gradient(to left, transparent 5%, rgba(0, 0, 0, .4));
+    background: linear-gradient(to left, transparent 5%, rgba(0, 0, 0, .6));
   }
 }
 </style>
