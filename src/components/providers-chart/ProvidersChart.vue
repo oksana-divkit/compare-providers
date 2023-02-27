@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from "vue";
-import type { Ref } from "vue";
+import { reactive, computed } from "vue";
 import ProviderChartItem from "./ProvidersChartItem.vue";
 
 import { providers } from "@/data/providers";
@@ -13,8 +12,18 @@ type ProvidersChartProps = {
 
 const props = defineProps<ProvidersChartProps>();
 
-onMounted(() => {
+const providersTotal = reactive<{
+  [index: string]: number
+}>({});
+
+const minTotal = computed(() => {
+  return Math.min(...Object.values(providersTotal));
 });
+
+const maxTotal = computed(() => {
+  return Math.max(...Object.values(providersTotal));
+});
+
 </script>
 
 <template>
@@ -24,16 +33,14 @@ onMounted(() => {
       :provider="provider"
       :sizeOfVolumeStorage="sizeOfVolumeStorage"
       :sizeOfVolumeTransfer="sizeOfVolumeTransfer"
+      :minTotal="minTotal"
+      :maxTotal="maxTotal"
+      @change="(e) => {
+          providersTotal[provider.id] = e;
+      }"
     />
   </div>
   
-  
-      <!-- @change="
-        (e) => {
-          providersTotal[provider.id].currentOption.value = e;
-          render();
-        }
-      " -->
 </template>
 
 <style lang="scss"></style>
